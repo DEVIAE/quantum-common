@@ -2,17 +2,21 @@ package com.quantum.common.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FileProcessingRecord {
 
     private String fileName;
-    private int totalChunks;
-    private int processedChunks;
-    private int failedChunks;
-    private ProcessingStatus status;
+    private volatile int totalChunks;
+    @JsonIgnore
+    private final AtomicInteger processedChunks = new AtomicInteger(0);
+    @JsonIgnore
+    private final AtomicInteger failedChunks = new AtomicInteger(0);
+    private volatile ProcessingStatus status;
     private Instant startTime;
-    private Instant endTime;
+    private volatile Instant endTime;
 
     public FileProcessingRecord() {
     }
@@ -23,8 +27,6 @@ public class FileProcessingRecord {
             @JsonProperty("totalChunks") int totalChunks) {
         this.fileName = fileName;
         this.totalChunks = totalChunks;
-        this.processedChunks = 0;
-        this.failedChunks = 0;
         this.status = ProcessingStatus.PENDING;
         this.startTime = Instant.now();
     }
@@ -46,19 +48,19 @@ public class FileProcessingRecord {
     }
 
     public int getProcessedChunks() {
-        return processedChunks;
+        return processedChunks.get();
     }
 
     public void setProcessedChunks(int processedChunks) {
-        this.processedChunks = processedChunks;
+        this.processedChunks.set(processedChunks);
     }
 
     public int getFailedChunks() {
-        return failedChunks;
+        return failedChunks.get();
     }
 
     public void setFailedChunks(int failedChunks) {
-        this.failedChunks = failedChunks;
+        this.failedChunks.set(failedChunks);
     }
 
     public ProcessingStatus getStatus() {
@@ -85,20 +87,22 @@ public class FileProcessingRecord {
         this.endTime = endTime;
     }
 
-    public void incrementProcessed() {
-        this.processedChunks++;
+    public synchronized void incrementProcessed() {
+        this.processedChunks.incrementAndGet();
         updateStatus();
     }
 
-    public void incrementFailed() {
-        this.failedChunks++;
+    public synchronized void incrementFailed() {
+        this.failedChunks.incrementAndGet();
         updateStatus();
     }
 
     private void updateStatus() {
-        if (processedChunks + failedChunks >= totalChunks) {
+        int processed = processedChunks.get();
+        int failed = failedChunks.get();
+        if (processed + failed >= totalChunks) {
             this.endTime = Instant.now();
-            this.status = failedChunks > 0
+            this.status = failed > 0
                     ? ProcessingStatus.PARTIALLY_COMPLETED
                     : ProcessingStatus.COMPLETED;
         } else {

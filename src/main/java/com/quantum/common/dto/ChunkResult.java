@@ -41,7 +41,8 @@ public class ChunkResult {
                 linesProcessed, 0, processingTimeMs, Instant.now(), null);
     }
 
-    public static ChunkResult partialSuccess(String chunkId, String fileName, int linesProcessed, int linesFailed, long processingTimeMs) {
+    public static ChunkResult partialSuccess(String chunkId, String fileName, int linesProcessed, int linesFailed,
+            long processingTimeMs) {
         return new ChunkResult(chunkId, fileName, ProcessingStatus.PARTIALLY_COMPLETED,
                 linesProcessed, linesFailed, processingTimeMs, Instant.now(), null);
     }

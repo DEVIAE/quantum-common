@@ -1,0 +1,41 @@
+name: Publish to GitHub Packages
+
+on:
+    push:
+        branches: [main, master, develop]
+    workflow_dispatch:
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up JDK 21
+              uses: actions/setup-java@v4
+              with:
+                  java-version: "21"
+                  distribution: "temurin"
+                  cache: maven
+
+            - name: Build and publish to GitHub Packages
+              run: mvn clean deploy -DskipTests || echo "Deploy failed (version may already exist - 409 Conflict is expected)"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Verify artifact is accessible
+              run: |
+                  STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                    -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                    "https://maven.pkg.github.com/DEVIAE/quantum-common/com/quantum/quantum-common/maven-metadata.xml")
+                  echo "GitHub Packages status: $STATUS"
+                  if [ "$STATUS" != "200" ]; then
+                    echo "::error::Artifact not found in GitHub Packages"
+                    exit 1
+                  fi

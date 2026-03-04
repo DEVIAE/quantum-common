@@ -1,0 +1,14 @@
+# Logstash pipelines configuration
+# R1: Pipelines separados por microservicio
+
+- pipeline.id: quantum-logs
+  path.config: "/usr/share/logstash/pipeline/quantum-logs.conf"
+  pipeline.workers: 2
+
+- pipeline.id: quantum-metrics
+  path.config: "/usr/share/logstash/pipeline/quantum-metrics.conf"
+  pipeline.workers: 1
+
+- pipeline.id: quantum-audit
+  path.config: "/usr/share/logstash/pipeline/quantum-audit.conf"
+  pipeline.workers: 1

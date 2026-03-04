@@ -1,0 +1,92 @@
+# =============================================================================
+# Metricbeat - R28: Monitoreo de recursos (CPU, memoria, almacenamiento)
+# R26: Auditar salud de containers/pods
+# =============================================================================
+
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+# Docker metrics
+metricbeat.modules:
+  - module: docker
+    metricsets:
+      - container
+      - cpu
+      - diskio
+      - healthcheck
+      - info
+      - memory
+      - network
+    period: 10s
+    hosts: ["unix:///var/run/docker.sock"]
+
+  - module: system
+    metricsets:
+      - cpu
+      - load
+      - memory
+      - network
+      - process
+      - process_summary
+      - socket_summary
+      - filesystem
+      - fsstat
+    enabled: true
+    period: 15s
+    processes: ['.*']
+    cpu.metrics: ["percentages", "normalized_percentages"]
+    core.metrics: ["percentages"]
+
+  - module: elasticsearch
+    xpack.enabled: true
+    metricsets:
+      - node
+      - node_stats
+      - cluster_stats
+      - index
+      - index_summary
+      - shard
+    period: 10s
+    hosts: ["http://elasticsearch:9200"]
+    username: "elastic"
+    password: "${ELASTIC_PASSWORD}"
+
+  - module: logstash
+    xpack.enabled: true
+    metricsets:
+      - node
+      - node_stats
+    period: 10s
+    hosts: ["http://logstash:9600"]
+
+  - module: kibana
+    xpack.enabled: true
+    metricsets:
+      - stats
+    period: 10s
+    hosts: ["http://kibana:5601"]
+    username: "elastic"
+    password: "${ELASTIC_PASSWORD}"
+
+# Output to Elasticsearch
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
+  index: "quantum-metricbeat-%{+yyyy.MM.dd}"
+
+# Kibana setup
+setup.kibana:
+  host: "http://kibana:5601"
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
+
+setup.dashboards.enabled: true
+
+# Processors
+processors:
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+  - add_host_metadata:
+      when.not.contains.tags: forwarded

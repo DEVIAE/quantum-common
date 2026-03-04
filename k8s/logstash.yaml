@@ -1,0 +1,96 @@
+# =============================================================================
+# Quantum Logstash - Kubernetes Deployment
+# R1: Pipeline de ingesta
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quantum-logstash
+  namespace: quantum
+  labels:
+    app: quantum-logstash
+    component: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quantum-logstash
+  template:
+    metadata:
+      labels:
+        app: quantum-logstash
+        component: elk
+    spec:
+      containers:
+        - name: logstash
+          image: docker.elastic.co/logstash/logstash:8.13.0
+          ports:
+            - containerPort: 5000
+              name: tcp-input
+            - containerPort: 5001
+              name: audit-input
+            - containerPort: 5044
+              name: metrics-input
+            - containerPort: 9600
+              name: monitoring
+          env:
+            - name: LS_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: quantum-elk-secrets
+                  key: elastic-password
+            - name: ELASTICSEARCH_HOST
+              value: elasticsearch
+          resources:
+            requests:
+              memory: "768Mi"
+              cpu: "300m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /_node/stats
+              port: 9600
+            initialDelaySeconds: 90
+            periodSeconds: 15
+          volumeMounts:
+            - name: logstash-pipeline
+              mountPath: /usr/share/logstash/pipeline
+            - name: logstash-config
+              mountPath: /usr/share/logstash/config/pipelines.yml
+              subPath: pipelines.yml
+      volumes:
+        - name: logstash-pipeline
+          configMap:
+            name: quantum-logstash-pipeline
+        - name: logstash-config
+          configMap:
+            name: quantum-logstash-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: quantum
+  labels:
+    app: quantum-logstash
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      targetPort: 5000
+      name: tcp-input
+    - port: 5001
+      targetPort: 5001
+      name: audit-input
+    - port: 5044
+      targetPort: 5044
+      name: metrics-input
+    - port: 9600
+      targetPort: 9600
+      name: monitoring
+  selector:
+    app: quantum-logstash

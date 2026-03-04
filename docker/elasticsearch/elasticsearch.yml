@@ -1,0 +1,33 @@
+# Elasticsearch configuration
+# R3: Campos indexados definidos via index templates
+# R5: Seguridad habilitada
+# R8: Backup via snapshot repository
+
+cluster.name: quantum-cluster
+node.name: quantum-es-node
+network.host: 0.0.0.0
+
+# Security
+xpack.security.enabled: true
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false
+
+# ILM (R12: Politicas de retencion)
+xpack.ilm.enabled: true
+
+# Monitoring (R28: Monitoreo de recursos)
+xpack.monitoring.collection.enabled: true
+
+# Backup repository path (R8)
+path.repo: ["/usr/share/elasticsearch/backup"]
+
+# Audit logging (R21: Sistema de auditoria)
+xpack.security.audit.enabled: true
+xpack.security.audit.logfile.events.include:
+  - access_granted
+  - access_denied
+  - authentication_failed
+  - connection_denied
+  - tampered_request
+  - run_as_denied
+  - anonymous_access_denied

@@ -1,0 +1,246 @@
+version: "3.8"
+
+# =============================================================================
+# Quantum File Processor - ELK Stack + Infrastructure
+# Elasticsearch 8.13.0 + Logstash 8.13.0 + Kibana 8.13.0
+# =============================================================================
+# Requisitos cubiertos: R1-R6, R8, R12-R14, R17-R19, R23, R26, R28
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Elasticsearch - Motor de busqueda y almacenamiento de logs
+  # ---------------------------------------------------------------------------
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: quantum-elasticsearch
+    hostname: elasticsearch
+    environment:
+      - node.name=quantum-es-node
+      - cluster.name=quantum-cluster
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
+      - xpack.license.self_generated.type=basic
+      # R12: ILM para politicas de retencion
+      - xpack.ilm.enabled=true
+      # R28: Monitoreo de recursos
+      - xpack.monitoring.collection.enabled=true
+      # Performance tuning
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      # R8: Plan de backup usando snapshot repository
+      - elasticsearch-backup:/usr/share/elasticsearch/backup
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - quantum-elk
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Logstash - Pipeline de ingesta y transformacion de logs
+  # ---------------------------------------------------------------------------
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.0
+    container_name: quantum-logstash
+    hostname: logstash
+    environment:
+      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
+      - ELASTICSEARCH_HOST=elasticsearch
+      - xpack.monitoring.elasticsearch.hosts=http://elasticsearch:9200
+      - xpack.monitoring.elasticsearch.username=elastic
+      - xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD:-quantum_elastic_2026}
+    volumes:
+      - ./logstash/pipeline/:/usr/share/logstash/pipeline/:ro
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+    ports:
+      # R1: TCP input para logback-logstash-encoder
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    networks:
+      - quantum-elk
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -sf http://localhost:9600/_node/stats || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Kibana - Visualizacion y dashboards
+  # ---------------------------------------------------------------------------
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.0
+    container_name: quantum-kibana
+    hostname: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD:-quantum_kibana_2026}
+      - SERVER_NAME=quantum-kibana
+      - SERVER_HOST=0.0.0.0
+      # R14: Autenticacion Kibana
+      - XPACK_SECURITY_ENABLED=true
+      # R4: Alerting habilitado
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY:-quantum-kibana-encryption-key-min32chars!}
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - quantum-elk
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Elasticsearch Setup - Inicializacion de seguridad, ILM, templates
+  # ---------------------------------------------------------------------------
+  elasticsearch-setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: quantum-es-setup
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
+      - KIBANA_PASSWORD=${KIBANA_PASSWORD:-quantum_kibana_2026}
+    volumes:
+      - ./setup/:/setup/:ro
+    networks:
+      - quantum-elk
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "/setup/init-elk.sh"]
+    restart: "no"
+
+  # ---------------------------------------------------------------------------
+  # ActiveMQ Artemis - Broker de mensajeria (infraestructura compartida)
+  # ---------------------------------------------------------------------------
+  artemis:
+    image: apache/activemq-artemis:2.33.0
+    container_name: quantum-artemis
+    hostname: artemis
+    environment:
+      - AMQ_USER=admin
+      - AMQ_PASSWORD=admin
+      - AMQ_EXTRA_ARGS=--queues quantum.file.chunks,quantum.file.results,DLQ.quantum.file.chunks
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    networks:
+      - quantum-elk
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8161/console || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Redis - Cache e idempotencia
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: quantum-redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - quantum-elk
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Metricbeat - R28: Monitoreo de recursos (CPU, memoria, almacenamiento)
+  # ---------------------------------------------------------------------------
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.13.0
+    container_name: quantum-metricbeat
+    hostname: metricbeat
+    user: root
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+    networks:
+      - quantum-elk
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Heartbeat - R26: Auditar salud de pods/servicios
+  # ---------------------------------------------------------------------------
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:8.13.0
+    container_name: quantum-heartbeat
+    hostname: heartbeat
+    user: root
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
+    volumes:
+      - ./heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml:ro
+    networks:
+      - quantum-elk
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  elasticsearch-data:
+    driver: local
+  elasticsearch-backup:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  quantum-elk:
+    driver: bridge
+    name: quantum-elk

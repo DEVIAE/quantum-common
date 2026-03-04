@@ -1,0 +1,26 @@
+# Kibana configuration
+# R2: Visualizacion en Kibana
+# R4: Alertas
+# R14: Autenticacion Kibana
+
+server.name: quantum-kibana
+server.host: "0.0.0.0"
+server.port: 5601
+
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "${ELASTICSEARCH_PASSWORD}"
+
+# R4: Alerting
+xpack.security.encryptionKey: "${XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY}"
+xpack.encryptedSavedObjects.encryptionKey: "${XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY}"
+xpack.reporting.encryptionKey: "${XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY}"
+
+# Monitoring
+monitoring.ui.container.elasticsearch.enabled: true
+
+# i18n
+i18n.locale: "en"
+
+# Logging
+logging.root.level: info

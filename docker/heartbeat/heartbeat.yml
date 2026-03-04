@@ -1,0 +1,100 @@
+# =============================================================================
+# Heartbeat - R26: Auditar salud de servicios/pods
+# R27: Deteccion de fallos con cuando y como
+# =============================================================================
+
+heartbeat.config.monitors:
+  path: ${path.config}/monitors.d/*.yml
+  reload.enabled: false
+
+heartbeat.monitors:
+  # Elasticsearch health
+  - type: http
+    id: elasticsearch-health
+    name: "Elasticsearch"
+    schedule: '@every 15s'
+    hosts: ["http://elasticsearch:9200/_cluster/health"]
+    username: "elastic"
+    password: "${ELASTIC_PASSWORD}"
+    check.response:
+      status: [200]
+      body:
+        - "green"
+        - "yellow"
+    tags: ["infrastructure", "elasticsearch"]
+
+  # Logstash health
+  - type: http
+    id: logstash-health
+    name: "Logstash"
+    schedule: '@every 15s'
+    hosts: ["http://logstash:9600/_node/stats"]
+    check.response:
+      status: [200]
+    tags: ["infrastructure", "logstash"]
+
+  # Kibana health
+  - type: http
+    id: kibana-health
+    name: "Kibana"
+    schedule: '@every 15s'
+    hosts: ["http://kibana:5601/api/status"]
+    check.response:
+      status: [200]
+    tags: ["infrastructure", "kibana"]
+
+  # ActiveMQ Artemis health
+  - type: http
+    id: artemis-health
+    name: "ActiveMQ Artemis"
+    schedule: '@every 15s'
+    hosts: ["http://artemis:8161/console"]
+    check.response:
+      status: [200]
+    tags: ["infrastructure", "artemis"]
+
+  # Redis health
+  - type: tcp
+    id: redis-health
+    name: "Redis"
+    schedule: '@every 15s'
+    hosts: ["redis:6379"]
+    tags: ["infrastructure", "redis"]
+
+  # File Ingester health (cuando este corriendo)
+  - type: http
+    id: file-ingester-health
+    name: "Quantum File Ingester"
+    schedule: '@every 10s'
+    hosts: ["http://host.docker.internal:8081/actuator/health"]
+    check.response:
+      status: [200]
+    tags: ["application", "file-ingester"]
+
+  # Chunk Processor health (cuando este corriendo)
+  - type: http
+    id: chunk-processor-health
+    name: "Quantum Chunk Processor"
+    schedule: '@every 10s'
+    hosts: ["http://host.docker.internal:8082/actuator/health"]
+    check.response:
+      status: [200]
+    tags: ["application", "chunk-processor"]
+
+# Output
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
+
+# Kibana
+setup.kibana:
+  host: "http://kibana:5601"
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
+
+setup.dashboards.enabled: true
+
+# Processors
+processors:
+  - add_observer_metadata: {}

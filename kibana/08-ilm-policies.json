@@ -1,0 +1,105 @@
+{
+    "_description": "Quantum File Processor - Politicas ILM (Index Lifecycle Management) para Elasticsearch 8.13.0",
+    "_instructions": "Importar cada politica con: PUT _ilm/policy/{nombre}. Usar import-all.bat o subir manualmente via Kibana > Stack Management > Index Lifecycle Policies.",
+    "policies": {
+        "quantum-logs-policy": {
+            "_description": "Logs: hot 7d -> warm 30d -> cold 90d -> delete 180d",
+            "policy": {
+                "phases": {
+                    "hot": {
+                        "min_age": "0ms",
+                        "actions": {
+                            "rollover": {
+                                "max_primary_shard_size": "10gb",
+                                "max_age": "7d"
+                            },
+                            "set_priority": {
+                                "priority": 100
+                            }
+                        }
+                    },
+                    "warm": {
+                        "min_age": "30d",
+                        "actions": {
+                            "shrink": {
+                                "number_of_shards": 1
+                            },
+                            "forcemerge": {
+                                "max_num_segments": 1
+                            },
+                            "set_priority": {
+                                "priority": 50
+                            }
+                        }
+                    },
+                    "cold": {
+                        "min_age": "90d",
+                        "actions": {
+                            "set_priority": {
+                                "priority": 0
+                            }
+                        }
+                    },
+                    "delete": {
+                        "min_age": "180d",
+                        "actions": {
+                            "delete": {}
+                        }
+                    }
+                }
+            }
+        },
+        "quantum-metrics-policy": {
+            "_description": "Metricas: hot 1d -> delete 30d",
+            "policy": {
+                "phases": {
+                    "hot": {
+                        "min_age": "0ms",
+                        "actions": {
+                            "rollover": {
+                                "max_primary_shard_size": "5gb",
+                                "max_age": "1d"
+                            }
+                        }
+                    },
+                    "delete": {
+                        "min_age": "30d",
+                        "actions": {
+                            "delete": {}
+                        }
+                    }
+                }
+            }
+        },
+        "quantum-audit-policy": {
+            "_description": "Auditoria: hot 30d -> warm 90d -> delete 365d (cumplimiento normativo)",
+            "policy": {
+                "phases": {
+                    "hot": {
+                        "min_age": "0ms",
+                        "actions": {
+                            "rollover": {
+                                "max_primary_shard_size": "10gb",
+                                "max_age": "30d"
+                            }
+                        }
+                    },
+                    "warm": {
+                        "min_age": "90d",
+                        "actions": {
+                            "forcemerge": {
+                                "max_num_segments": 1
+                            }
+                        }
+                    },
+                    "delete": {
+                        "min_age": "365d",
+                        "actions": {
+                            "delete": {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

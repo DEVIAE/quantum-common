@@ -1,0 +1,3 @@
+{"id":"quantum-logs-dv","type":"index-pattern","attributes":{"title":"quantum-logs-*","timeFieldName":"@timestamp","name":"Quantum Logs"},"references":[],"managed":false,"coreMigrationVersion":"8.8.0","typeMigrationVersion":"8.0.0"}
+{"id":"quantum-audit-dv","type":"index-pattern","attributes":{"title":"quantum-audit-*","timeFieldName":"@timestamp","name":"Quantum Audit"},"references":[],"managed":false,"coreMigrationVersion":"8.8.0","typeMigrationVersion":"8.0.0"}
+{"id":"quantum-metrics-dv","type":"index-pattern","attributes":{"title":"quantum-metrics-*","timeFieldName":"@timestamp","name":"Quantum Metrics"},"references":[],"managed":false,"coreMigrationVersion":"8.8.0","typeMigrationVersion":"8.0.0"}

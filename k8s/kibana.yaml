@@ -43,6 +43,16 @@ spec:
                 secretKeyRef:
                   name: quantum-elk-secrets
                   key: kibana-encryption-key
+            - name: XPACK_SECURITY_ENCRYPTIONKEY
+              valueFrom:
+                secretKeyRef:
+                  name: quantum-elk-secrets
+                  key: kibana-security-key
+            - name: XPACK_REPORTING_ENCRYPTIONKEY
+              valueFrom:
+                secretKeyRef:
+                  name: quantum-elk-secrets
+                  key: kibana-reporting-key
           resources:
             requests:
               memory: "512Mi"

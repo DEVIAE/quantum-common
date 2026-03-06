@@ -128,15 +128,9 @@ spec:
           protocol: TCP
         env:
         - name: AMQ_USER
-          valueFrom:
-            secretKeyRef:
-              name: amq-credentials
-              key: username
+          value: "admin"
         - name: AMQ_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: amq-credentials
-              key: password
+          value: "admin123"
         - name: AMQ_ROLE
           value: "admin"
         - name: AMQ_REQUIRE_LOGIN

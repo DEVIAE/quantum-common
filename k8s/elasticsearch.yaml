@@ -47,10 +47,6 @@ spec:
                 secretKeyRef:
                   name: quantum-elk-secrets
                   key: elastic-password
-            - name: xpack.ilm.enabled
-              value: "true"
-            - name: xpack.monitoring.collection.enabled
-              value: "true"
             - name: ES_JAVA_OPTS
               value: "-Xms1g -Xmx1g"
           resources:

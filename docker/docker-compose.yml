@@ -24,10 +24,7 @@ services:
       - xpack.security.transport.ssl.enabled=false
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
       - xpack.license.self_generated.type=basic
-      # R12: ILM para politicas de retencion
-      - xpack.ilm.enabled=true
-      # R28: Monitoreo de recursos
-      - xpack.monitoring.collection.enabled=true
+      # R12: ILM habilitado por defecto en 8.x (no requiere setting)
       # Performance tuning
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - bootstrap.memory_lock=true

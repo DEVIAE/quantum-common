@@ -635,7 +635,39 @@ echo "  Alerts index template created!"
 # =============================================================================
 # Summary
 # =============================================================================
-echo "[9/9] Initialization complete!"
+echo "[9/10] Initialization complete!"
+
+# =============================================================================
+# R2: Import Kibana Dashboards (Saved Objects)
+# =============================================================================
+echo "[10/10] Importing Kibana dashboards..."
+
+KIBANA_URL="http://kibana:5601"
+
+# Wait for Kibana to be ready
+echo "  Waiting for Kibana..."
+until curl -sf -u "${ELASTIC_USER}:${ELASTIC_PASS}" "${KIBANA_URL}/api/status" > /dev/null 2>&1; do
+  echo "  Kibana not ready, waiting 10s..."
+  sleep 10
+done
+echo "  Kibana is ready!"
+
+# Import saved objects (data views + visualizations + dashboard)
+if [ -f /setup/kibana-dashboards.ndjson ]; then
+  IMPORT_RESULT=$(curl -sf -X POST -u "${ELASTIC_USER}:${ELASTIC_PASS}" \
+    -H "kbn-xsrf: true" \
+    --form file=@/setup/kibana-dashboards.ndjson \
+    "${KIBANA_URL}/api/saved_objects/_import?overwrite=true" 2>&1)
+
+  if echo "${IMPORT_RESULT}" | grep -q '"success":true'; then
+    echo "  Dashboards imported successfully!"
+  else
+    echo "  WARNING: Dashboard import result: ${IMPORT_RESULT}"
+  fi
+else
+  echo "  WARNING: kibana-dashboards.ndjson not found, skipping dashboard import"
+fi
+
 echo "============================================="
 echo "  Quantum ELK Stack Initialized Successfully"
 echo "============================================="
@@ -661,4 +693,9 @@ echo "    high-error-rate   : >10 errors in 5 min"
 echo "    chunk-failure     : >5 chunk failures in 10 min"
 echo "    dlq-alert         : Any DLQ event"
 echo "    service-down      : Service health check failure"
+echo ""
+echo "  Dashboards:"
+echo "    Quantum File Processor - Dashboard Principal"
+echo "    10 visualizaciones (4 KPIs + 6 graficos)"
+echo "    Ruta: Analytics > Dashboard"
 echo "============================================="

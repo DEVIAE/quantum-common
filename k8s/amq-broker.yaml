@@ -1,0 +1,192 @@
+## =============================================================================
+## ActiveMQ Artemis - OpenShift Sandbox Deployment
+## Servicio de mensajería JMS para Quantum File Processor
+## Hostname: amq-broker | Port: 61616 (CORE) | Port: 8161 (Console)
+## =============================================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: amq-credentials
+  labels:
+    app: amq-broker
+type: Opaque
+stringData:
+  username: "admin"
+  password: "admin123"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: amq-broker-config
+  labels:
+    app: amq-broker
+data:
+  # Broker configuration XML
+  broker.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <configuration xmlns="urn:activemq" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="urn:activemq /schema/artemis-configuration.xsd">
+      <core xmlns="urn:activemq:core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:activemq:core ">
+
+        <name>amq-broker</name>
+        <persistence-enabled>false</persistence-enabled>
+        <journal-type>NIO</journal-type>
+
+        <!-- Memory limits for Sandbox -->
+        <global-max-size>128Mb</global-max-size>
+        <global-max-messages>-1</global-max-messages>
+
+        <acceptors>
+          <!-- CORE protocol for Java clients -->
+          <acceptor name="core">tcp://0.0.0.0:61616?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=CORE,AMQP;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpMinLargeMessageSize=102400;amqpDuplicateDetection=true</acceptor>
+        </acceptors>
+
+        <security-settings>
+          <security-setting match="#">
+            <permission type="createNonDurableQueue" roles="admin"/>
+            <permission type="deleteNonDurableQueue" roles="admin"/>
+            <permission type="createDurableQueue" roles="admin"/>
+            <permission type="deleteDurableQueue" roles="admin"/>
+            <permission type="createAddress" roles="admin"/>
+            <permission type="deleteAddress" roles="admin"/>
+            <permission type="consume" roles="admin"/>
+            <permission type="browse" roles="admin"/>
+            <permission type="send" roles="admin"/>
+            <permission type="manage" roles="admin"/>
+          </security-setting>
+        </security-settings>
+
+        <address-settings>
+          <!-- Default settings -->
+          <address-setting match="#">
+            <dead-letter-address>DLQ</dead-letter-address>
+            <expiry-address>ExpiryQueue</expiry-address>
+            <redelivery-delay>5000</redelivery-delay>
+            <max-delivery-attempts>5</max-delivery-attempts>
+            <max-size-bytes>64Mb</max-size-bytes>
+            <message-counter-history-day-limit>10</message-counter-history-day-limit>
+            <address-full-policy>PAGE</address-full-policy>
+            <auto-create-queues>true</auto-create-queues>
+            <auto-create-addresses>true</auto-create-addresses>
+            <auto-delete-queues>false</auto-delete-queues>
+          </address-setting>
+
+          <!-- Quantum chunks queue - optimized for throughput -->
+          <address-setting match="quantum.file.chunks">
+            <max-size-bytes>64Mb</max-size-bytes>
+            <redelivery-delay>3000</redelivery-delay>
+            <max-delivery-attempts>3</max-delivery-attempts>
+          </address-setting>
+        </address-settings>
+
+        <addresses>
+          <address name="quantum.file.chunks">
+            <anycast>
+              <queue name="quantum.file.chunks"/>
+            </anycast>
+          </address>
+          <address name="DLQ">
+            <anycast>
+              <queue name="DLQ"/>
+            </anycast>
+          </address>
+          <address name="ExpiryQueue">
+            <anycast>
+              <queue name="ExpiryQueue"/>
+            </anycast>
+          </address>
+        </addresses>
+      </core>
+    </configuration>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amq-broker
+  labels:
+    app: amq-broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amq-broker
+  template:
+    metadata:
+      labels:
+        app: amq-broker
+    spec:
+      containers:
+      - name: amq-broker
+        image: quay.io/artemiscloud/activemq-artemis-broker-kubernetes:artemis.2.33.0
+        ports:
+        - containerPort: 61616
+          name: core
+          protocol: TCP
+        - containerPort: 8161
+          name: console
+          protocol: TCP
+        env:
+        - name: AMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: amq-credentials
+              key: username
+        - name: AMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: amq-credentials
+              key: password
+        - name: AMQ_ROLE
+          value: "admin"
+        - name: AMQ_REQUIRE_LOGIN
+          value: "true"
+        - name: AMQ_EXTRA_ARGS
+          value: "--no-autotune"
+        - name: JAVA_OPTS
+          value: "-Xms128m -Xmx256m -XX:+UseG1GC"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        readinessProbe:
+          tcpSocket:
+            port: 61616
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 61616
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        volumeMounts:
+        - name: broker-config
+          mountPath: /amq/init/config
+          readOnly: true
+      volumes:
+      - name: broker-config
+        configMap:
+          name: amq-broker-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: amq-broker
+  labels:
+    app: amq-broker
+spec:
+  selector:
+    app: amq-broker
+  ports:
+  - name: core
+    port: 61616
+    targetPort: 61616
+    protocol: TCP
+  - name: console
+    port: 8161
+    targetPort: 8161
+    protocol: TCP
+  type: ClusterIP

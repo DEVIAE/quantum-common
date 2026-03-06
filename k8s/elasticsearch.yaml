@@ -57,17 +57,23 @@ spec:
               memory: "2Gi"
               cpu: "1000m"
           readinessProbe:
-            httpGet:
-              path: /_cluster/health?wait_for_status=yellow
-              port: 9200
+            exec:
+              command:
+                - bash
+                - -c
+                - "curl -sf -u elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health?wait_for_status=yellow"
             initialDelaySeconds: 60
             periodSeconds: 10
+            timeoutSeconds: 5
           livenessProbe:
-            httpGet:
-              path: /_cluster/health
-              port: 9200
+            exec:
+              command:
+                - bash
+                - -c
+                - "curl -sf -u elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health"
             initialDelaySeconds: 90
             periodSeconds: 30
+            timeoutSeconds: 5
           volumeMounts:
             - name: es-data
               mountPath: /usr/share/elasticsearch/data

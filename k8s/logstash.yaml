@@ -61,6 +61,9 @@ spec:
             - name: logstash-config
               mountPath: /usr/share/logstash/config/pipelines.yml
               subPath: pipelines.yml
+            - name: logstash-settings
+              mountPath: /usr/share/logstash/config/logstash.yml
+              subPath: logstash.yml
       volumes:
         - name: logstash-pipeline
           configMap:
@@ -68,6 +71,9 @@ spec:
         - name: logstash-config
           configMap:
             name: quantum-logstash-config
+        - name: logstash-settings
+          configMap:
+            name: quantum-logstash-settings
 ---
 apiVersion: v1
 kind: Service

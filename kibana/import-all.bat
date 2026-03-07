@@ -64,14 +64,14 @@ REM PASO 2: Importar Saved Searches (Discover)
 REM =============================================================================
 echo [2/5] Importando Saved Searches...
 
-echo  Importando Logs Explorer...
+echo  Importando Chunk Events Explorer...
 curl -sf -X POST -u %ES_USER%:%ES_PASS% ^
   -H "kbn-xsrf: true" ^
   --form file=@"%SCRIPT_DIR%02-discover-logs.ndjson" ^
   "%KIBANA_URL%/api/saved_objects/_import?overwrite=true"
 echo.
 
-echo  Importando Audit Explorer...
+echo  Importando Chunks Fallidos...
 curl -sf -X POST -u %ES_USER%:%ES_PASS% ^
   -H "kbn-xsrf: true" ^
   --form file=@"%SCRIPT_DIR%03-discover-audit.ndjson" ^
@@ -85,21 +85,21 @@ REM PASO 3: Importar Dashboards + Visualizaciones
 REM =============================================================================
 echo [3/5] Importando Dashboards...
 
-echo  Importando Dashboard de Logs...
+echo  Importando Dashboard Chunk Events - Monitoreo...
 curl -sf -X POST -u %ES_USER%:%ES_PASS% ^
   -H "kbn-xsrf: true" ^
   --form file=@"%SCRIPT_DIR%04-dashboard-logs.ndjson" ^
   "%KIBANA_URL%/api/saved_objects/_import?overwrite=true"
 echo.
 
-echo  Importando Dashboard de Auditoria...
+echo  Importando Dashboard Chunk Events - Resumen por Archivo...
 curl -sf -X POST -u %ES_USER%:%ES_PASS% ^
   -H "kbn-xsrf: true" ^
   --form file=@"%SCRIPT_DIR%05-dashboard-audit.ndjson" ^
   "%KIBANA_URL%/api/saved_objects/_import?overwrite=true"
 echo.
 
-echo  Importando Dashboard Principal (Overview)...
+echo  Importando Dashboard Overview - Procesamiento...
 curl -sf -X POST -u %ES_USER%:%ES_PASS% ^
   -H "kbn-xsrf: true" ^
   --form file=@"%SCRIPT_DIR%06-dashboard-overview.ndjson" ^
@@ -179,9 +179,9 @@ echo  Importacion Completada
 echo =============================================
 echo.
 echo  Objetos importados:
-echo    - 3 Data Views (logs, audit, metrics)
-echo    - 2 Saved Searches (logs explorer, audit explorer)
-echo    - 3 Dashboards (logs, audit, overview)
+echo    - 4 Data Views (logs, audit, metrics, chunk-events)
+ echo    - 2 Saved Searches (chunk events explorer, chunks fallidos)
+ echo    - 3 Dashboards (chunk events, resumen por archivo, overview)
 echo    - 4 Alertas Watcher
 echo    - 3 Politicas ILM
 echo.

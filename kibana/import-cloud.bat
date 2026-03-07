@@ -54,7 +54,7 @@ curl -sf -X POST ^
   "%KIBANA_URL%/api/saved_objects/_import?overwrite=true"
 echo.
 
-echo  Saved Search: Logs Explorer...
+echo  Saved Search: Chunk Events Explorer...
 curl -sf -X POST ^
   -H "Authorization: ApiKey %API_KEY%" ^
   -H "kbn-xsrf: true" ^
@@ -62,7 +62,7 @@ curl -sf -X POST ^
   "%KIBANA_URL%/api/saved_objects/_import?overwrite=true"
 echo.
 
-echo  Saved Search: Audit Explorer...
+echo  Saved Search: Chunks Fallidos...
 curl -sf -X POST ^
   -H "Authorization: ApiKey %API_KEY%" ^
   -H "kbn-xsrf: true" ^
@@ -77,7 +77,7 @@ REM PASO 2: Importar Dashboards (Lens inline - Serverless compatible)
 REM =============================================================================
 echo [2/3] Importando Dashboards...
 
-echo  Dashboard: Quantum Logs - Monitoreo...
+echo  Dashboard: Quantum Chunk Events - Monitoreo...
 curl -sf -X POST ^
   -H "Authorization: ApiKey %API_KEY%" ^
   -H "kbn-xsrf: true" ^
@@ -85,7 +85,7 @@ curl -sf -X POST ^
   "%KIBANA_URL%/api/saved_objects/_import?overwrite=true"
 echo.
 
-echo  Dashboard: Quantum Audit - Eventos...
+echo  Dashboard: Quantum Chunk Events - Resumen por Archivo...
 curl -sf -X POST ^
   -H "Authorization: ApiKey %API_KEY%" ^
   -H "kbn-xsrf: true" ^
@@ -93,7 +93,7 @@ curl -sf -X POST ^
   "%KIBANA_URL%/api/saved_objects/_import?overwrite=true"
 echo.
 
-echo  Dashboard: Quantum Overview - Sistema...
+echo  Dashboard: Quantum Overview - Procesamiento...
 curl -sf -X POST ^
   -H "Authorization: ApiKey %API_KEY%" ^
   -H "kbn-xsrf: true" ^
@@ -120,9 +120,9 @@ echo  Importacion Completada
 echo =============================================
 echo.
 echo  Objetos importados:
-echo    - 3 Data Views (logs, audit, metrics)
-echo    - 2 Saved Searches (logs explorer, audit explorer)
-echo    - 3 Dashboards (logs, audit, overview)
+echo    - 4 Data Views (logs, audit, metrics, chunk-events)
+ echo    - 2 Saved Searches (chunk events explorer, chunks fallidos)
+ echo    - 3 Dashboards (chunk events, resumen por archivo, overview)
 echo.
 echo  NOTA: Elastic Cloud Serverless no soporta:
 echo    - Watcher (usar Kibana Alerting Rules)

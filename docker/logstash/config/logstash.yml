@@ -1,16 +1,8 @@
-# Logstash configuration
-# R1: Pipeline de ingesta de logs
-# R6: Monitoreo del pipeline
-
-http.host: "0.0.0.0"
-xpack.monitoring.elasticsearch.hosts: ["http://elasticsearch:9200"]
-xpack.monitoring.elasticsearch.username: "elastic"
-xpack.monitoring.elasticsearch.password: "${ELASTIC_PASSWORD}"
-
-# Pipeline configuration
-pipeline.workers: 2
-pipeline.batch.size: 125
-pipeline.batch.delay: 50
-
-# Logging
+http.host: 0.0.0.0
 log.level: info
+pipeline.batch.delay: 50
+pipeline.batch.size: 125
+pipeline.workers: 2
+xpack.monitoring.elasticsearch.hosts: http://elasticsearch:9200
+xpack.monitoring.elasticsearch.password: quantum_elastic_2026
+xpack.monitoring.elasticsearch.username: elastic

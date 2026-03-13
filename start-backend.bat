@@ -1,10 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
-title Quantum Common - Build & Install
+echo Quantum Common - Build & Install
 echo ========================================
 echo   Quantum Common - Shared Library
 echo   Spring Boot 3.2.4 + Java 21
-echo   Version: 1.0.0
+echo   Version: 1.1.0
 echo ========================================
 echo.
 

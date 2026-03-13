@@ -1,0 +1,68 @@
+========================================
+  Quantum Common - Shared Library
+  Spring Boot 3.2.4 + Java 21
+  Version: 1.1.0
+========================================
+
+[INFO] JAVA_HOME = C:\Program Files\Java\jdk-21
+[INFO] MAVEN_HOME = E:\Projects\Java\Maven\apache-maven-3.8.6
+
+[INFO] Log: E:\Projects\IA\Proyectos\DEVIAE\quantum-common\logs\1203262023.log
+
+========================================
+  Tipo:     Libreria compartida (JAR)
+  Accion:   mvn clean install
+  Registry: Maven local (~/.m2/repository)
+========================================
+
+[INFO] Este proyecto es una LIBRERIA, no un servicio ejecutable.
+[INFO] Se compilara e instalara en el repositorio Maven local.
+[INFO] Los servicios (file-ingester, chunk-processor) dependen de esta libreria.
+
+[INFO] Ejecutando mvn clean install...
+[INFO] Log: E:\Projects\IA\Proyectos\DEVIAE\quantum-common\logs\1203262023.log
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.quantum:quantum-common >---------------------
+[INFO] Building Quantum Common 1.1.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.3.2:clean (default-clean) @ quantum-common ---
+[INFO] Deleting E:\Projects\IA\Proyectos\DEVIAE\quantum-common\target
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ quantum-common ---
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] Copying 12 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ quantum-common ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 10 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ quantum-common ---
+[INFO] skip non existing resourceDirectory E:\Projects\IA\Proyectos\DEVIAE\quantum-common\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ quantum-common ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.1.2:test (default-test) @ quantum-common ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.3.0:jar (default-jar) @ quantum-common ---
+[INFO] Building jar: E:\Projects\IA\Proyectos\DEVIAE\quantum-common\target\quantum-common-1.1.0.jar
+[INFO] 
+[INFO] --- maven-install-plugin:3.1.1:install (default-install) @ quantum-common ---
+[INFO] Installing E:\Projects\IA\Proyectos\DEVIAE\quantum-common\pom.xml to C:\Users\rodri\.m2\repository\com\quantum\quantum-common\1.1.0\quantum-common-1.1.0.pom
+[INFO] Installing E:\Projects\IA\Proyectos\DEVIAE\quantum-common\target\quantum-common-1.1.0.jar to C:\Users\rodri\.m2\repository\com\quantum\quantum-common\1.1.0\quantum-common-1.1.0.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.547 s
+[INFO] Finished at: 2026-03-12T20:23:11-03:00
+[INFO] ------------------------------------------------------------------------
+
+[OK] quantum-common instalado correctamente en Maven local.
+[INFO] Ahora puedes compilar quantum-file-ingester y quantum-chunk-processor.
+
+[INFO] Build finalizado. Log guardado en E:\Projects\IA\Proyectos\DEVIAE\quantum-common\logs\1203262023.log
+Presione una tecla para continuar . . . 
+¨Desea terminar el trabajo por lotes (S/N)? 

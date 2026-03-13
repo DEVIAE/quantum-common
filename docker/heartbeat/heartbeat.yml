@@ -3,6 +3,10 @@
 # R27: Deteccion de fallos con cuando y como
 # =============================================================================
 
+# Requerido en Windows: los bind mounts tienen permisos 777 (world-writable)
+# Elastic Beats rechaza configs con esos permisos por seguridad → deshabilitar
+strict.perms: false
+
 heartbeat.config.monitors:
   path: ${path.config}/monitors.d/*.yml
   reload.enabled: false
@@ -93,7 +97,9 @@ setup.kibana:
   username: "elastic"
   password: "${ELASTIC_PASSWORD}"
 
-setup.dashboards.enabled: true
+# Los dashboards se importan via script (import-all.bat / ndjson)
+# Deshabilitar para evitar error de directorio /kibana/7 en Beats 8.x
+setup.dashboards.enabled: false
 
 # Processors
 processors:

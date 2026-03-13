@@ -3,6 +3,10 @@
 # R26: Auditar salud de containers/pods
 # =============================================================================
 
+# Requerido en Windows: los bind mounts tienen permisos 777 (world-writable)
+# Elastic Beats rechaza configs con esos permisos por seguridad → deshabilitar
+strict.perms: false
+
 metricbeat.config.modules:
   path: ${path.config}/modules.d/*.yml
   reload.enabled: false
@@ -76,13 +80,19 @@ output.elasticsearch:
   password: "${ELASTIC_PASSWORD}"
   index: "quantum-metricbeat-%{+yyyy.MM.dd}"
 
+# Requerido cuando se usa un index name personalizado
+setup.template.name: "quantum-metricbeat"
+setup.template.pattern: "quantum-metricbeat-*"
+
 # Kibana setup
 setup.kibana:
   host: "http://kibana:5601"
   username: "elastic"
   password: "${ELASTIC_PASSWORD}"
 
-setup.dashboards.enabled: true
+# Los dashboards se importan via script (import-all.bat / ndjson)
+# Deshabilitar para evitar error de directorio /kibana/7 en Beats 8.x
+setup.dashboards.enabled: false
 
 # Processors
 processors:

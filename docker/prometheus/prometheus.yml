@@ -1,0 +1,73 @@
+# =============================================================================
+# Quantum File Processor - Prometheus Configuration
+# Scraping de métricas /actuator/prometheus de los 4 microservicios Java
+# Los servicios corren en el HOST → se accede via host.docker.internal
+# =============================================================================
+
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: local
+
+scrape_configs:
+
+  # ---------------------------------------------------------------------------
+  # quantum-sftp-gateway (port 8083)
+  # Métricas: Camel FileStabilityRoute, JVM, HTTP
+  # ---------------------------------------------------------------------------
+  - job_name: 'quantum-sftp-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8083']
+        labels:
+          service: 'sftp-gateway'
+          component: 'gateway'
+    # Reintentar si el servicio no está arriba
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # quantum-format-normalizer (port 8084)
+  # Métricas: Camel NormalizationRoute, JVM, broker Artemis embebido, HTTP
+  # ---------------------------------------------------------------------------
+  - job_name: 'quantum-format-normalizer'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8084']
+        labels:
+          service: 'format-normalizer'
+          component: 'normalizer'
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # quantum-file-ingester (port 8081)
+  # Métricas: Camel FileIngestionRoute, JVM, JMS consumers, HTTP
+  # ---------------------------------------------------------------------------
+  - job_name: 'quantum-file-ingester'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8081']
+        labels:
+          service: 'file-ingester'
+          component: 'ingester'
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # quantum-chunk-processor (port 8082)
+  # Métricas: JMS chunk consumer, Redis idempotency, JVM, HTTP
+  # ---------------------------------------------------------------------------
+  - job_name: 'quantum-chunk-processor'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8082']
+        labels:
+          service: 'chunk-processor'
+          component: 'processor'
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # Prometheus mismo (auto-monitoreo)
+  # ---------------------------------------------------------------------------
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

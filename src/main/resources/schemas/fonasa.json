@@ -1,0 +1,97 @@
+{
+    "institution": "Fonasa",
+    "description": "Fonasa – Planilla de pago XML v1.6",
+    "format": "xml",
+    "encoding": "utf-8",
+    "filename_pattern": "^PL_PVR_",
+    "field_mapping": {
+        "rut": "worker.rut",
+        "dv": "worker.dv",
+        "ap_pat": "worker.last_name_1",
+        "ap_mat": "worker.last_name_2",
+        "nombres": "worker.first_name",
+        "renta": "worker.taxable_income",
+        "dias": "worker.days_worked",
+        "cod_mov": "worker.movement_code",
+        "_employer.rut_empleador": "employer.rut",
+        "_employer.dv_empleador": "employer.dv",
+        "_employer.razon_social": "employer.name",
+        "_header.periodo": "_meta.period",
+        "cot_fonasa": "contributions.health_fonasa"
+    },
+    "validations": [
+        {
+            "field": "worker.rut",
+            "required": true
+        },
+        {
+            "field": "worker.taxable_income",
+            "required": true,
+            "min": 0
+        },
+        {
+            "field": "contributions.health_fonasa",
+            "required": true,
+            "min": 0
+        }
+    ],
+    "header_xpath": "./ListaDePlanillas/Planilla/Encabezado",
+    "employer_xpath": "./ListaDePlanillas/Planilla/Empleador",
+    "detail_xpath": ".//Cotizacion",
+    "header_fields": {
+        "tipo_declaracion": "PlaTipoDeclaracion",
+        "periodo": "PlaPerRenta",
+        "fecha_pago": "PlaFechaTimbre",
+        "tot_renta": "PlaRentaAfp",
+        "tasa_cotiz": "PlaTasaCotizacion",
+        "tot_cot": "PlaMontoCot",
+        "num_trab": "PlaNumTra"
+    },
+    "employer_fields": {
+        "rut_empleador": "EmpRut",
+        "dv_empleador": "EmpDv",
+        "razon_social": "EmpRazonSocial"
+    },
+    "detail_fields": {
+        "rut": {
+            "path": "CotRutCotizante",
+            "type": "str"
+        },
+        "dv": {
+            "path": "CotDvCotizante",
+            "type": "str"
+        },
+        "nombres": {
+            "path": "CotNombres",
+            "type": "str"
+        },
+        "ap_pat": {
+            "path": "CotApePaterno",
+            "type": "str"
+        },
+        "ap_mat": {
+            "path": "CotApeMaterno",
+            "type": "str"
+        },
+        "renta": {
+            "path": "CotRentaImp",
+            "type": "int"
+        },
+        "cot_fonasa": {
+            "path": "CotMontoCotiza",
+            "type": "int"
+        },
+        "dias": {
+            "path": "CotDiasTrabajados",
+            "type": "int"
+        },
+        "regimen": {
+            "path": "CotRegimenPrev",
+            "type": "str"
+        },
+        "cod_mov": {
+            "path": "CotCodigoMov",
+            "type": "str"
+        }
+    }
+}

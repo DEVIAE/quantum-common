@@ -1,0 +1,421 @@
+{
+    "institution": "CCAF",
+    "description": "CCAF – Formato Publicacion v6.4",
+    "format": "fixed",
+    "encoding": "latin-1",
+    "line_ending": "CRLF",
+    "filename_pattern": "^CCAF_",
+    "detail_record_key": "tipo",
+    "detail_record_value": "3",
+    "field_mapping": {
+        "rut": "worker.rut",
+        "dv": "worker.dv",
+        "ap_pat": "worker.last_name_1",
+        "ap_mat": "worker.last_name_2",
+        "nombres": "worker.first_name",
+        "renta": "worker.taxable_income",
+        "dias": "worker.days_worked",
+        "cod_mov": "worker.movement_code",
+        "fecha_mov_ini": "worker.movement_start",
+        "fecha_mov_fin": "worker.movement_end",
+        "asig_total": "contributions.family_allowance",
+        "asig_sim": "contributions.family_allowance_simple",
+        "num_cargas": "ext.num_cargas"
+    },
+    "validations": [
+        {
+            "field": "worker.rut",
+            "required": true
+        },
+        {
+            "field": "worker.taxable_income",
+            "required": true,
+            "min": 0
+        },
+        {
+            "field": "contributions.family_allowance",
+            "required": true,
+            "min": 0
+        }
+    ],
+    "records": {
+        "0": {
+            "record_type": "control",
+            "length": 500,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "num_planillas",
+                    "start": 1,
+                    "length": 10,
+                    "type": "int"
+                }
+            ]
+        },
+        "1": {
+            "record_type": "header",
+            "length": 500,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "folio",
+                    "start": 1,
+                    "length": 16,
+                    "type": "str"
+                },
+                {
+                    "name": "banco",
+                    "start": 17,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_pago",
+                    "start": 67,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_planilla",
+                    "start": 68,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_pago",
+                    "start": 69,
+                    "length": 8,
+                    "type": "date"
+                },
+                {
+                    "name": "hora_pago",
+                    "start": 77,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "cod_ccaf",
+                    "start": 83,
+                    "length": 4,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_empleador",
+                    "start": 87,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_empleador",
+                    "start": 96,
+                    "length": 1,
+                    "type": "str"
+                }
+            ]
+        },
+        "2": {
+            "record_type": "employer",
+            "length": 500,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "razon_social",
+                    "start": 1,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_empleador",
+                    "start": 51,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_empleador",
+                    "start": 60,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "actividad",
+                    "start": 61,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "calle",
+                    "start": 67,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "numero",
+                    "start": 117,
+                    "length": 10,
+                    "type": "str"
+                },
+                {
+                    "name": "departamento",
+                    "start": 127,
+                    "length": 20,
+                    "type": "str"
+                },
+                {
+                    "name": "comuna",
+                    "start": 147,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "ciudad",
+                    "start": 177,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "region",
+                    "start": 207,
+                    "length": 2,
+                    "type": "str"
+                },
+                {
+                    "name": "telefono",
+                    "start": 209,
+                    "length": 20,
+                    "type": "str"
+                },
+                {
+                    "name": "nombre_rl",
+                    "start": 229,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_rl",
+                    "start": 279,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_rl",
+                    "start": 288,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_empresa",
+                    "start": 289,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "num_trabajadores",
+                    "start": 290,
+                    "length": 12,
+                    "type": "int"
+                }
+            ]
+        },
+        "3": {
+            "record_type": "detail",
+            "length": 500,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "rut",
+                    "start": 1,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv",
+                    "start": 10,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_pat",
+                    "start": 11,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_mat",
+                    "start": 41,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "nombres",
+                    "start": 71,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "renta",
+                    "start": 101,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "num_cargas",
+                    "start": 113,
+                    "length": 3,
+                    "type": "int"
+                },
+                {
+                    "name": "num_carg_sim",
+                    "start": 116,
+                    "length": 3,
+                    "type": "int"
+                },
+                {
+                    "name": "num_carg_sub",
+                    "start": 119,
+                    "length": 3,
+                    "type": "int"
+                },
+                {
+                    "name": "asig_sim",
+                    "start": 122,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "asig_adi",
+                    "start": 134,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "asig_sub",
+                    "start": 146,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "asig_total",
+                    "start": 158,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "cod_mov",
+                    "start": 170,
+                    "length": 2,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_mov_ini",
+                    "start": 172,
+                    "length": 8,
+                    "type": "date_opt"
+                },
+                {
+                    "name": "fecha_mov_fin",
+                    "start": 180,
+                    "length": 8,
+                    "type": "date_opt"
+                },
+                {
+                    "name": "dias",
+                    "start": 188,
+                    "length": 2,
+                    "type": "int"
+                },
+                {
+                    "name": "tipo_contrato",
+                    "start": 190,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "renta_bruta",
+                    "start": 191,
+                    "length": 12,
+                    "type": "int"
+                }
+            ]
+        },
+        "4": {
+            "record_type": "totals",
+            "length": 500,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "tot_sim",
+                    "start": 1,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_adi",
+                    "start": 13,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_sub",
+                    "start": 25,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_total",
+                    "start": 37,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tipo_pago",
+                    "start": 49,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo",
+                    "start": 50,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "num_trab",
+                    "start": 56,
+                    "length": 7,
+                    "type": "int"
+                },
+                {
+                    "name": "fecha_pago",
+                    "start": 63,
+                    "length": 8,
+                    "type": "date"
+                }
+            ]
+        }
+    }
+}

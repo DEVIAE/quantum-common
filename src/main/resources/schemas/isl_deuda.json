@@ -1,0 +1,221 @@
+{
+    "institution": "ISL_Deuda",
+    "description": "ISL – Deudas en Cobranza – Formato PD02 v1.2",
+    "format": "fixed",
+    "encoding": "latin-1",
+    "line_ending": "CRLF",
+    "filename_pattern": "^PD02",
+    "detail_record_key": "tipo",
+    "detail_record_value": "2",
+    "field_mapping": {
+        "rut": "worker.rut",
+        "dv": "worker.dv",
+        "ap_pat": "worker.last_name_1",
+        "ap_mat": "worker.last_name_2",
+        "nombres": "worker.first_name",
+        "renta": "worker.taxable_income",
+        "num_deuda": "ext.debt_id",
+        "capital": "ext.debt_principal",
+        "interes": "ext.debt_interest",
+        "total": "ext.debt_total"
+    },
+    "validations": [
+        {
+            "field": "worker.rut",
+            "required": true
+        },
+        {
+            "field": "ext.debt_total",
+            "required": true,
+            "min": 0
+        }
+    ],
+    "records": {
+        "0": {
+            "record_type": "control",
+            "length": 24,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_ente",
+                    "start": 1,
+                    "length": 10,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_ente",
+                    "start": 11,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "num_planillas",
+                    "start": 12,
+                    "length": 12,
+                    "type": "int"
+                }
+            ]
+        },
+        "1": {
+            "record_type": "debt_header",
+            "length": 676,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "num_deuda",
+                    "start": 1,
+                    "length": 16,
+                    "type": "str"
+                },
+                {
+                    "name": "referencia",
+                    "start": 17,
+                    "length": 18,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_empleador",
+                    "start": 51,
+                    "length": 10,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_empleador",
+                    "start": 61,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "razon_social",
+                    "start": 62,
+                    "length": 255,
+                    "type": "str"
+                },
+                {
+                    "name": "email",
+                    "start": 317,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo",
+                    "start": 371,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "monto_capital",
+                    "start": 377,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "monto_interes",
+                    "start": 389,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "monto_total",
+                    "start": 449,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "fecha_pago",
+                    "start": 657,
+                    "length": 8,
+                    "type": "date"
+                },
+                {
+                    "name": "hora_pago",
+                    "start": 665,
+                    "length": 6,
+                    "type": "str"
+                }
+            ]
+        },
+        "2": {
+            "record_type": "detail",
+            "length": 209,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "rut",
+                    "start": 1,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv",
+                    "start": 10,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_pat",
+                    "start": 11,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_mat",
+                    "start": 41,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "nombres",
+                    "start": 71,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "renta",
+                    "start": 121,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "capital",
+                    "start": 133,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "interes",
+                    "start": 145,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "total",
+                    "start": 169,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "num_deuda",
+                    "start": 181,
+                    "length": 16,
+                    "type": "str"
+                }
+            ]
+        }
+    }
+}

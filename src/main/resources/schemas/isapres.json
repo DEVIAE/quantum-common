@@ -1,0 +1,420 @@
+{
+    "institution": "Isapres",
+    "description": "Isapres – Formato Publicacion v5.5 (largo=290)",
+    "format": "fixed",
+    "encoding": "latin-1",
+    "line_ending": "CRLF",
+    "filename_pattern": "^ISP_",
+    "detail_record_key": "tipo",
+    "detail_record_value": "3",
+    "field_mapping": {
+        "rut": "worker.rut",
+        "dv": "worker.dv",
+        "ap_pat": "worker.last_name_1",
+        "ap_mat": "worker.last_name_2",
+        "nombres": "worker.first_name",
+        "renta": "worker.taxable_income",
+        "cod_mov": "worker.movement_code",
+        "fecha_mov_ini": "worker.movement_start",
+        "fecha_mov_fin": "worker.movement_end",
+        "periodo": "_meta.period",
+        "cot_fonasa": "contributions.health_fonasa",
+        "cot_pactada": "contributions.health_isapre_agreed",
+        "cot_total": "contributions.health_isapre_total"
+    },
+    "validations": [
+        {
+            "field": "worker.rut",
+            "required": true
+        },
+        {
+            "field": "worker.taxable_income",
+            "required": true,
+            "min": 0
+        },
+        {
+            "field": "contributions.health_fonasa",
+            "required": true,
+            "min": 0
+        },
+        {
+            "field": "contributions.health_isapre_total",
+            "required": true,
+            "min": 0
+        }
+    ],
+    "records": {
+        "0": {
+            "record_type": "control",
+            "length": 290,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "num_planillas",
+                    "start": 1,
+                    "length": 10,
+                    "type": "int"
+                }
+            ]
+        },
+        "1": {
+            "record_type": "header",
+            "length": 290,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "folio",
+                    "start": 1,
+                    "length": 16,
+                    "type": "str"
+                },
+                {
+                    "name": "banco",
+                    "start": 17,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_pago",
+                    "start": 67,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_planilla",
+                    "start": 68,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_pago",
+                    "start": 69,
+                    "length": 8,
+                    "type": "date"
+                },
+                {
+                    "name": "hora_pago",
+                    "start": 77,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "cod_isapre",
+                    "start": 83,
+                    "length": 4,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_empleador",
+                    "start": 87,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_empleador",
+                    "start": 96,
+                    "length": 1,
+                    "type": "str"
+                }
+            ]
+        },
+        "2": {
+            "record_type": "employer",
+            "length": 290,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "razon_social",
+                    "start": 1,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_empleador",
+                    "start": 51,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_empleador",
+                    "start": 60,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "actividad",
+                    "start": 61,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "calle",
+                    "start": 67,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "numero",
+                    "start": 117,
+                    "length": 10,
+                    "type": "str"
+                },
+                {
+                    "name": "departamento",
+                    "start": 127,
+                    "length": 20,
+                    "type": "str"
+                },
+                {
+                    "name": "comuna",
+                    "start": 147,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "ciudad",
+                    "start": 177,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "region",
+                    "start": 207,
+                    "length": 2,
+                    "type": "str"
+                },
+                {
+                    "name": "nombre_rl",
+                    "start": 229,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_rl",
+                    "start": 279,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_rl",
+                    "start": 288,
+                    "length": 1,
+                    "type": "str"
+                }
+            ]
+        },
+        "3": {
+            "record_type": "detail",
+            "length": 290,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "rut",
+                    "start": 1,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv",
+                    "start": 10,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_pat",
+                    "start": 11,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_mat",
+                    "start": 41,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "nombres",
+                    "start": 71,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_cotiz",
+                    "start": 101,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "tramo_asig",
+                    "start": 102,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo",
+                    "start": 103,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "renta",
+                    "start": 109,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "cot_fonasa",
+                    "start": 121,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "cot_pactada",
+                    "start": 133,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "diferencia",
+                    "start": 145,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "cot_total",
+                    "start": 157,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "cot_total2",
+                    "start": 169,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "cot_ret",
+                    "start": 181,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "cod_mov",
+                    "start": 193,
+                    "length": 2,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_mov_ini",
+                    "start": 195,
+                    "length": 8,
+                    "type": "date_opt"
+                },
+                {
+                    "name": "fecha_mov_fin",
+                    "start": 203,
+                    "length": 8,
+                    "type": "date_opt"
+                }
+            ]
+        },
+        "4": {
+            "record_type": "totals",
+            "length": 290,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "tot_fonasa",
+                    "start": 1,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_parc",
+                    "start": 13,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_dif",
+                    "start": 25,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_ret",
+                    "start": 37,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_total",
+                    "start": 49,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_total2",
+                    "start": 61,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "origen",
+                    "start": 73,
+                    "length": 15,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo",
+                    "start": 88,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "tot_renta",
+                    "start": 94,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "num_trab",
+                    "start": 118,
+                    "length": 7,
+                    "type": "int"
+                },
+                {
+                    "name": "fecha_pago",
+                    "start": 125,
+                    "length": 8,
+                    "type": "date"
+                }
+            ]
+        }
+    }
+}

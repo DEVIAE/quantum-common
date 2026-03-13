@@ -1,0 +1,373 @@
+{
+    "institution": "ISL",
+    "description": "ISL – Mutual de Seguridad – Formato Publicacion v2.7 (largo=862)",
+    "format": "fixed",
+    "encoding": "latin-1",
+    "line_ending": "CRLF",
+    "filename_pattern": "^ISL_",
+    "detail_record_key": "tipo",
+    "detail_record_value": "3",
+    "field_mapping": {
+        "rut": "worker.rut",
+        "dv": "worker.dv",
+        "ap_pat": "worker.last_name_1",
+        "ap_mat": "worker.last_name_2",
+        "nombres": "worker.first_name",
+        "renta": "worker.taxable_income",
+        "dias": "worker.days_worked",
+        "sexo": "worker.sex",
+        "cod_mov": "worker.movement_code",
+        "fecha_mov_ini": "worker.movement_start",
+        "fecha_mov_fin": "worker.movement_end",
+        "periodo": "_meta.period",
+        "cot_acc": "contributions.accident"
+    },
+    "validations": [
+        {
+            "field": "worker.rut",
+            "required": true
+        },
+        {
+            "field": "worker.taxable_income",
+            "required": true,
+            "min": 0
+        },
+        {
+            "field": "contributions.accident",
+            "required": true,
+            "min": 0
+        }
+    ],
+    "records": {
+        "0": {
+            "record_type": "control",
+            "length": 862,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "num_planillas",
+                    "start": 1,
+                    "length": 10,
+                    "type": "int"
+                }
+            ]
+        },
+        "1": {
+            "record_type": "header",
+            "length": 862,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "folio",
+                    "start": 1,
+                    "length": 16,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_planilla",
+                    "start": 17,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_pago",
+                    "start": 18,
+                    "length": 8,
+                    "type": "date"
+                },
+                {
+                    "name": "hora_pago",
+                    "start": 26,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_creacion",
+                    "start": 32,
+                    "length": 8,
+                    "type": "date"
+                },
+                {
+                    "name": "hora_creacion",
+                    "start": 40,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "cod_isl",
+                    "start": 46,
+                    "length": 4,
+                    "type": "str"
+                }
+            ]
+        },
+        "2": {
+            "record_type": "employer",
+            "length": 862,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "folio",
+                    "start": 1,
+                    "length": 16,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_pago",
+                    "start": 17,
+                    "length": 8,
+                    "type": "date"
+                },
+                {
+                    "name": "cod_caja",
+                    "start": 25,
+                    "length": 12,
+                    "type": "str"
+                },
+                {
+                    "name": "actividad",
+                    "start": 37,
+                    "length": 12,
+                    "type": "str"
+                },
+                {
+                    "name": "rut_empleador",
+                    "start": 49,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv_empleador",
+                    "start": 58,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "tipo_empresa",
+                    "start": 59,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "razon_social",
+                    "start": 60,
+                    "length": 255,
+                    "type": "str"
+                },
+                {
+                    "name": "calle",
+                    "start": 315,
+                    "length": 50,
+                    "type": "str"
+                },
+                {
+                    "name": "numero",
+                    "start": 365,
+                    "length": 10,
+                    "type": "str"
+                },
+                {
+                    "name": "departamento",
+                    "start": 375,
+                    "length": 20,
+                    "type": "str"
+                },
+                {
+                    "name": "cod_postal",
+                    "start": 395,
+                    "length": 5,
+                    "type": "str"
+                },
+                {
+                    "name": "cod_ciudad",
+                    "start": 400,
+                    "length": 5,
+                    "type": "str"
+                },
+                {
+                    "name": "region",
+                    "start": 405,
+                    "length": 2,
+                    "type": "str"
+                },
+                {
+                    "name": "telefono",
+                    "start": 407,
+                    "length": 20,
+                    "type": "str"
+                },
+                {
+                    "name": "tasa_cotiz",
+                    "start": 427,
+                    "length": 5,
+                    "type": "int"
+                },
+                {
+                    "name": "tipo_contrato",
+                    "start": 432,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo_ini",
+                    "start": 433,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo_fin",
+                    "start": 439,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo_ren",
+                    "start": 445,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "periodo_pago",
+                    "start": 451,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "num_trabajadores",
+                    "start": 457,
+                    "length": 7,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_renta",
+                    "start": 464,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tot_acc",
+                    "start": 476,
+                    "length": 12,
+                    "type": "int"
+                }
+            ]
+        },
+        "3": {
+            "record_type": "detail",
+            "length": 862,
+            "fields": [
+                {
+                    "name": "tipo",
+                    "start": 0,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "folio",
+                    "start": 1,
+                    "length": 16,
+                    "type": "str"
+                },
+                {
+                    "name": "rut",
+                    "start": 17,
+                    "length": 9,
+                    "type": "str"
+                },
+                {
+                    "name": "dv",
+                    "start": 26,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_pat",
+                    "start": 27,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "ap_mat",
+                    "start": 57,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "nombres",
+                    "start": 87,
+                    "length": 30,
+                    "type": "str"
+                },
+                {
+                    "name": "sexo",
+                    "start": 117,
+                    "length": 1,
+                    "type": "str"
+                },
+                {
+                    "name": "dias",
+                    "start": 118,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "renta",
+                    "start": 130,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "periodo",
+                    "start": 142,
+                    "length": 6,
+                    "type": "str"
+                },
+                {
+                    "name": "cod_mov",
+                    "start": 154,
+                    "length": 2,
+                    "type": "str"
+                },
+                {
+                    "name": "fecha_mov_ini",
+                    "start": 156,
+                    "length": 8,
+                    "type": "date_opt"
+                },
+                {
+                    "name": "fecha_mov_fin",
+                    "start": 164,
+                    "length": 8,
+                    "type": "date_opt"
+                },
+                {
+                    "name": "cot_acc",
+                    "start": 174,
+                    "length": 12,
+                    "type": "int"
+                },
+                {
+                    "name": "tipo_jornada",
+                    "start": 212,
+                    "length": 2,
+                    "type": "str"
+                }
+            ]
+        }
+    }
+}

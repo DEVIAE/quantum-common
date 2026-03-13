@@ -70,7 +70,7 @@ services:
       - xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD:-quantum_elastic_2026}
     volumes:
       - ./logstash/pipeline/:/usr/share/logstash/pipeline/:ro
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
     ports:
       # R1: TCP input para logback-logstash-encoder
@@ -149,11 +149,16 @@ services:
 
   # ---------------------------------------------------------------------------
   # ActiveMQ Artemis - Broker de mensajeria (infraestructura compartida)
+  # NOTA: Solo se usa en modo full-docker (OpenShift/CI).
+  # En desarrollo local, format-normalizer levanta un broker embedded en :61616.
+  # Arrancar con: docker compose --profile full-docker up artemis
   # ---------------------------------------------------------------------------
   artemis:
     image: apache/activemq-artemis:2.33.0
     container_name: quantum-artemis
     hostname: artemis
+    profiles:
+      - full-docker
     environment:
       - AMQ_USER=admin
       - AMQ_PASSWORD=admin
@@ -198,6 +203,9 @@ services:
     container_name: quantum-metricbeat
     hostname: metricbeat
     user: root
+    # --strict.perms=false: necesario en Windows (bind mounts tienen permisos 777)
+    # Beats rechaza configs world-writable por seguridad; el flag lo deshabilita
+    command: metricbeat -e --strict.perms=false
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
     volumes:
@@ -220,6 +228,8 @@ services:
     container_name: quantum-heartbeat
     hostname: heartbeat
     user: root
+    # --strict.perms=false: necesario en Windows (bind mounts tienen permisos 777)
+    command: heartbeat -e --strict.perms=false
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
     volumes:
@@ -231,12 +241,82 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # ---------------------------------------------------------------------------
+  # Prometheus - Scraping de metricas /actuator/prometheus de los 4 servicios Java
+  # Los servicios corren en el HOST → se accede via host.docker.internal
+  # ---------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: quantum-prometheus
+    hostname: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
+      - "--web.enable-admin-api"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - quantum-elk
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9090/-/healthy || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Grafana - Dashboards para metricas Prometheus + datasource auto-provisionado
+  # Dashboard: Quantum File Processor (uid: quantum-overview)
+  # ---------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:10.4.1
+    container_name: quantum-grafana
+    hostname: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-quantum_grafana_2026}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_HTTP_PORT=3000
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - quantum-elk
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
 volumes:
   elasticsearch-data:
     driver: local
   elasticsearch-backup:
     driver: local
   redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
     driver: local
 
 networks:

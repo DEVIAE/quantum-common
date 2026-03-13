@@ -1,0 +1,113 @@
+{
+    "institution": "IPS",
+    "description": "IPS – Instituto de Prevision Social – Planilla XML v2.3",
+    "format": "xml",
+    "encoding": "utf-8",
+    "filename_pattern": "^IPS_",
+    "field_mapping": {
+        "rut": "worker.rut",
+        "dv": "worker.dv",
+        "ap_pat": "worker.last_name_1",
+        "ap_mat": "worker.last_name_2",
+        "nombres": "worker.first_name",
+        "renta": "worker.taxable_income",
+        "dias": "worker.days_worked",
+        "tramo_asig": "worker.benefit_tier",
+        "_employer.rut_empleador": "employer.rut",
+        "_employer.dv_empleador": "employer.dv",
+        "_employer.razon_social": "employer.name",
+        "_header.anio": "_meta.period_year",
+        "_header.mes": "_meta.period_month",
+        "cot_inp": "contributions.inp",
+        "cot_fonasa": "contributions.health_fonasa",
+        "cot_acc": "contributions.accident",
+        "cot_desah": "contributions.severance"
+    },
+    "validations": [
+        {
+            "field": "worker.rut",
+            "required": true
+        },
+        {
+            "field": "worker.taxable_income",
+            "required": true,
+            "min": 0
+        },
+        {
+            "field": "contributions.inp",
+            "required": true,
+            "min": 0
+        }
+    ],
+    "header_xpath": "./planilla",
+    "employer_xpath": "./planilla",
+    "detail_xpath": ".//cotizacionGeneral",
+    "header_fields": {
+        "tipo_planilla": "tipoPlanilla",
+        "mes": "mesRemuneracion",
+        "anio": "anioRemuneracion",
+        "tot_inp": "montoPensionesInp",
+        "tot_fonasa": "montoFonasa",
+        "tot_cot": "montoCotizacion",
+        "tot_asig": "montoAsigFamiliar"
+    },
+    "employer_fields": {
+        "rut_empleador": "rutEmpleador",
+        "dv_empleador": "dvRutEmpleador",
+        "razon_social": "nombreEmp"
+    },
+    "detail_fields": {
+        "id": {
+            "path": "idCotizacion",
+            "type": "int"
+        },
+        "rut": {
+            "path": "rutTrabajador",
+            "type": "str"
+        },
+        "dv": {
+            "path": "dvRutTrabajador",
+            "type": "str"
+        },
+        "ap_pat": {
+            "path": "apellidoPaternoTrab",
+            "type": "str"
+        },
+        "ap_mat": {
+            "path": "apellidoMaternoTrab",
+            "type": "str"
+        },
+        "nombres": {
+            "path": "nombresTrab",
+            "type": "str"
+        },
+        "renta": {
+            "path": "montoRemuneracion",
+            "type": "int"
+        },
+        "dias": {
+            "path": "diasTrabajados",
+            "type": "int"
+        },
+        "cot_inp": {
+            "path": "montoPensionesInp",
+            "type": "int"
+        },
+        "cot_fonasa": {
+            "path": "montoFonasa",
+            "type": "int"
+        },
+        "cot_acc": {
+            "path": "montoAccidentesTrabajo",
+            "type": "int"
+        },
+        "cot_desah": {
+            "path": "cotizacionDesahucio",
+            "type": "int"
+        },
+        "tramo_asig": {
+            "path": "tramoAsignacionFamiliar",
+            "type": "str"
+        }
+    }
+}

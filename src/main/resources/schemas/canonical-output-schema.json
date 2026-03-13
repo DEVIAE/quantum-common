@@ -1,0 +1,440 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "canonical-output-schema",
+    "title": "CanonicalRecord",
+    "description": "Schema del registro canonico JSONL producido por quantum-format-normalizer y consumido por quantum-file-ingester y quantum-chunk-processor. Version 1.0. Para agregar campos bumpar schema_version en _meta.",
+    "type": "object",
+    "required": [
+        "_meta",
+        "worker",
+        "contributions"
+    ],
+    "properties": {
+        "_meta": {
+            "description": "Metadata de trazabilidad. Siempre presente en todos los registros.",
+            "type": "object",
+            "required": [
+                "record_id",
+                "schema_version",
+                "institution",
+                "format_code",
+                "source_file",
+                "normalized_at",
+                "normalizer_version"
+            ],
+            "properties": {
+                "record_id": {
+                    "description": "ID determinista para idempotencia en Redis. Formato: '{format_code}~{source_file}~{seq_8digits}'. Ejemplo: 'afp~AFP_076354771K_202502.DAT~00000001'",
+                    "type": "string",
+                    "pattern": "^[a-z_]+~.+~\\d{8}$",
+                    "examples": [
+                        "afp~AFP_076354771K_202502.DAT~00000001"
+                    ]
+                },
+                "schema_version": {
+                    "description": "Version del schema canonico. Cambio de campos = bumpar version.",
+                    "type": "string",
+                    "examples": [
+                        "1.0"
+                    ]
+                },
+                "institution": {
+                    "description": "Nombre de la institucion emisora del archivo.",
+                    "type": "string",
+                    "enum": [
+                        "AFP",
+                        "AFC",
+                        "APV",
+                        "CCAF",
+                        "Fonasa",
+                        "IPS",
+                        "IPS_SSP",
+                        "Isapres",
+                        "ISL",
+                        "ISL_Deuda",
+                        "Mutuales"
+                    ]
+                },
+                "format_code": {
+                    "description": "Codigo del formato en minusculas. Corresponde al nombre del schema JSON de entrada (sin .json).",
+                    "type": "string",
+                    "enum": [
+                        "afp",
+                        "afc",
+                        "apv",
+                        "ccaf",
+                        "fonasa",
+                        "ips",
+                        "ips_ssp",
+                        "isapres",
+                        "isl",
+                        "isl_deuda",
+                        "mutuales"
+                    ]
+                },
+                "period": {
+                    "description": "Periodo de devengamiento en formato ISO YYYY-MM. Vacio si no se puede inferir del archivo.",
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}$|^$",
+                    "examples": [
+                        "2025-02"
+                    ]
+                },
+                "source_file": {
+                    "description": "Nombre del archivo fuente sin path.",
+                    "type": "string",
+                    "examples": [
+                        "AFP_076354771K_202502.DAT"
+                    ]
+                },
+                "normalized_at": {
+                    "description": "Timestamp ISO 8601 UTC del momento de normalizacion.",
+                    "type": "string",
+                    "format": "date-time",
+                    "examples": [
+                        "2026-03-11T18:00:00Z"
+                    ]
+                },
+                "normalizer_version": {
+                    "description": "Version del servicio quantum-format-normalizer que genero el registro.",
+                    "type": "string",
+                    "examples": [
+                        "1.0.0"
+                    ]
+                }
+            }
+        },
+        "employer": {
+            "description": "Datos del empleador. Presente en formatos XML (Fonasa, IPS) y otros con datos de empresa. Omitido (null) cuando no aplica.",
+            "type": [
+                "object",
+                "null"
+            ],
+            "properties": {
+                "rut": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "RUT sin DV ni puntos."
+                },
+                "dv": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Digito verificador del RUT."
+                },
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Razon social."
+                }
+            }
+        },
+        "worker": {
+            "description": "Datos del trabajador. Siempre presente.",
+            "type": "object",
+            "required": [
+                "rut"
+            ],
+            "properties": {
+                "rut": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "RUT sin DV ni puntos."
+                },
+                "dv": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Digito verificador del RUT."
+                },
+                "last_name_1": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Primer apellido."
+                },
+                "last_name_2": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Segundo apellido."
+                },
+                "first_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Nombres."
+                },
+                "taxable_income": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Renta imponible en pesos CLP."
+                },
+                "days_worked": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Dias trabajados en el periodo."
+                },
+                "sex": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "enum": [
+                        "M",
+                        "F",
+                        null
+                    ],
+                    "description": "Sexo. Solo ISL y Mutuales."
+                },
+                "movement_code": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Codigo de movimiento del trabajador."
+                },
+                "movement_start": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Fecha inicio movimiento (YYYY-MM-DD)."
+                },
+                "movement_end": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Fecha fin movimiento (YYYY-MM-DD)."
+                },
+                "benefit_tier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Tramo asignacion familiar. Solo IPS."
+                }
+            }
+        },
+        "contributions": {
+            "description": "Cotizaciones del periodo. Siempre presente. Todos los campos se serializan siempre (incluso null) para contrato fijo al downstream. null = no aplica para esta institucion.",
+            "type": "object",
+            "properties": {
+                "afp": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Cotizacion AFP obligatoria. AFP, IPS-SSP."
+                },
+                "sis": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Seguro de Invalidez y Sobrevivencia. AFP."
+                },
+                "apv": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Ahorro Previsional Voluntario."
+                },
+                "afc_worker": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Seguro Cesantia trabajador. AFC."
+                },
+                "afc_employer": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Seguro Cesantia empleador. AFC."
+                },
+                "afc_total": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Seguro Cesantia total. AFC."
+                },
+                "health_fonasa": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Cotizacion Fonasa 7%. Fonasa."
+                },
+                "health_isapre_agreed": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Plan pactado Isapre. Isapres."
+                },
+                "health_isapre_total": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Cotizacion total salud Isapre. Isapres."
+                },
+                "accident": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Accidentes del trabajo. ISL, Mutuales, IPS."
+                },
+                "inp": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Cotizacion IPS (ex-INP). IPS."
+                },
+                "severance": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Indemnizacion. IPS."
+                },
+                "social_security": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Seguridad social. IPS-SSP."
+                },
+                "family_allowance": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Asignacion familiar total. CCAF."
+                },
+                "family_allowance_simple": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Asignacion familiar simple. CCAF."
+                }
+            }
+        },
+        "ext": {
+            "description": "Campos adicionales especificos de algunas instituciones. Omitido cuando vacio. Ejemplos: CCAF→num_cargas(int), ISL_Deuda→capital/interes/total(int).",
+            "type": [
+                "object",
+                "null"
+            ],
+            "additionalProperties": true
+        }
+    },
+    "examples": [
+        {
+            "_meta": {
+                "record_id": "afp~AFP_076354771K_202502.DAT~00000001",
+                "schema_version": "1.0",
+                "institution": "AFP",
+                "format_code": "afp",
+                "period": "2025-02",
+                "source_file": "AFP_076354771K_202502.DAT",
+                "normalized_at": "2026-03-11T18:00:00Z",
+                "normalizer_version": "1.0.0"
+            },
+            "employer": {
+                "rut": "76354771",
+                "dv": "K",
+                "name": "EMPRESA EJEMPLO SA"
+            },
+            "worker": {
+                "rut": "8000001",
+                "dv": "4",
+                "last_name_1": "GONZALEZ",
+                "last_name_2": "SANCHEZ",
+                "first_name": "ANA MARIA",
+                "taxable_income": 420000,
+                "days_worked": 30
+            },
+            "contributions": {
+                "afp": 43470,
+                "sis": 4662,
+                "apv": null,
+                "afc_worker": null,
+                "afc_employer": null,
+                "afc_total": null,
+                "health_fonasa": null,
+                "health_isapre_agreed": null,
+                "health_isapre_total": null,
+                "accident": null,
+                "inp": null,
+                "severance": null,
+                "social_security": null,
+                "family_allowance": null,
+                "family_allowance_simple": null
+            }
+        },
+        {
+            "_meta": {
+                "record_id": "afc~AFC_076354771K_202502_01.DAT~00000001",
+                "schema_version": "1.0",
+                "institution": "AFC",
+                "format_code": "afc",
+                "period": "2025-02",
+                "source_file": "AFC_076354771K_202502_01.DAT",
+                "normalized_at": "2026-03-11T21:00:00Z",
+                "normalizer_version": "1.0.0"
+            },
+            "worker": {
+                "rut": "9000001",
+                "dv": "5",
+                "last_name_1": "PEREZ",
+                "first_name": "JUAN",
+                "taxable_income": 550000,
+                "days_worked": 30
+            },
+            "contributions": {
+                "afp": null,
+                "sis": null,
+                "apv": null,
+                "afc_worker": 2750,
+                "afc_employer": 5500,
+                "afc_total": 8250,
+                "health_fonasa": null,
+                "health_isapre_agreed": null,
+                "health_isapre_total": null,
+                "accident": null,
+                "inp": null,
+                "severance": null,
+                "social_security": null,
+                "family_allowance": null,
+                "family_allowance_simple": null
+            }
+        }
+    ]
+}

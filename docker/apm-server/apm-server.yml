@@ -1,0 +1,19 @@
+apm-server:
+  host: "0.0.0.0:8200"
+  auth:
+    secret_token: "${APM_SECRET_TOKEN:quantum-apm-token}"
+
+output.elasticsearch:
+  hosts: ["${ELASTICSEARCH_HOST:elasticsearch}:9200"]
+  username: "${ELASTIC_USERNAME:elastic}"
+  password: "${ELASTIC_PASSWORD:quantum_elastic_2026}"
+
+# Kibana para APM UI
+apm-server.kibana:
+  enabled: true
+  host: "${KIBANA_HOST:kibana}:5601"
+
+logging:
+  level: info
+  to_files: false
+  to_stderr: true

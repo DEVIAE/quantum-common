@@ -312,6 +312,44 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # ---------------------------------------------------------------------------
+  # Elastic APM Server - Distributed tracing por archivo (per-file pipeline)
+  # UI: Kibana → Observability → APM
+  # Recibe traces de los 4 microservicios (sftp-gateway, format-normalizer,
+  # file-ingester, chunk-processor) y los correlaciona por filename.
+  # ---------------------------------------------------------------------------
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.13.0
+    container_name: quantum-apm-server
+    hostname: apm-server
+    user: root
+    # --strict.perms=false: necesario en Windows (bind mounts tienen permisos 777)
+    command: apm-server -e --strict.perms=false
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-quantum_elastic_2026}
+      - ELASTIC_USERNAME=elastic
+      - ELASTICSEARCH_HOST=elasticsearch
+      - KIBANA_HOST=kibana
+      - APM_SECRET_TOKEN=${APM_SECRET_TOKEN:-quantum-apm-token}
+    volumes:
+      - ./apm-server/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    ports:
+      - "8200:8200"
+    networks:
+      - quantum-elk
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8200/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
 volumes:
   elasticsearch-data:
     driver: local

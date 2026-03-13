@@ -1,0 +1,691 @@
+{
+  "uid": "quantum-pipeline-flow",
+  "title": "Quantum Pipeline — Flujo de Procesamiento",
+  "description": "Vista completa del pipeline: SFTP Gateway → Format Normalizer → File Ingester → Chunk Processor",
+  "tags": ["quantum", "pipeline", "flow"],
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "templating": { "list": [] },
+  "annotations": { "list": [] },
+  "panels": [
+    {
+      "type": "canvas",
+      "id": 1,
+      "title": "Flujo del Pipeline",
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 0 },
+      "datasource": null,
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "options": {
+        "inlineEditing": false,
+        "panZoom": false,
+        "showAdvancedTypes": true,
+        "root": {
+          "type": "frame",
+          "name": "root",
+          "elements": [
+            {
+              "type": "rectangle",
+              "name": "header",
+              "placement": { "top": 8, "left": 10, "width": 600, "height": 28, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "QUANTUM FILE PROCESSOR — Pipeline de Procesamiento" },
+                "align": "left", "valign": "middle",
+                "color": { "fixed": "#E3F2FD" }, "size": 16, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "sftp-box",
+              "placement": { "top": 45, "left": 10, "width": 190, "height": 90, "rotation": 0 },
+              "background": { "color": { "fixed": "#1565C0" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "#42A5F5" }, "width": 2 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "SFTP Gateway\n:8083" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFFFFF" }, "size": 14, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "arrow-bar-1",
+              "placement": { "top": 88, "left": 200, "width": 72, "height": 6, "rotation": 0 },
+              "background": { "color": { "fixed": "#546E7A" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "#546E7A" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFFFFF" }, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "arrow-tip-1",
+              "placement": { "top": 79, "left": 268, "width": 17, "height": 24, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "\u25b6" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#90CAF9" }, "size": 18, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "queue-label-1",
+              "placement": { "top": 30, "left": 200, "width": 86, "height": 14, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "file.ready (JMS)" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFCC80" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "fn-box",
+              "placement": { "top": 45, "left": 285, "width": 190, "height": 90, "rotation": 0 },
+              "background": { "color": { "fixed": "#1B5E20" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "#66BB6A" }, "width": 2 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "Format Normalizer\n:8084" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFFFFF" }, "size": 14, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "arrow-bar-2",
+              "placement": { "top": 88, "left": 475, "width": 72, "height": 6, "rotation": 0 },
+              "background": { "color": { "fixed": "#546E7A" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "#546E7A" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFFFFF" }, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "arrow-tip-2",
+              "placement": { "top": 79, "left": 543, "width": 17, "height": 24, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "\u25b6" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#90CAF9" }, "size": 18, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "queue-label-2",
+              "placement": { "top": 30, "left": 465, "width": 108, "height": 14, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "file.normalized (JMS)" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFCC80" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "fi-box",
+              "placement": { "top": 45, "left": 560, "width": 190, "height": 90, "rotation": 0 },
+              "background": { "color": { "fixed": "#4A148C" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "#CE93D8" }, "width": 2 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "File Ingester\n:8081" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFFFFF" }, "size": 14, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "arrow-bar-3",
+              "placement": { "top": 88, "left": 750, "width": 72, "height": 6, "rotation": 0 },
+              "background": { "color": { "fixed": "#546E7A" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "#546E7A" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFFFFF" }, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "arrow-tip-3",
+              "placement": { "top": 79, "left": 818, "width": 17, "height": 24, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "\u25b6" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#90CAF9" }, "size": 18, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "queue-label-3",
+              "placement": { "top": 30, "left": 736, "width": 120, "height": 14, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "quantum.file.chunks (JMS)" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFCC80" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "cp-box",
+              "placement": { "top": 45, "left": 835, "width": 190, "height": 90, "rotation": 0 },
+              "background": { "color": { "fixed": "#BF360C" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "#FF8A65" }, "width": 2 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "Chunk Processor\n:8082" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#FFFFFF" }, "size": 14, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "dir-sftp",
+              "placement": { "top": 142, "left": 10, "width": 190, "height": 16, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "\ud83d\udcc2 /data/input" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#90CAF9" }, "size": 11, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "dir-fn",
+              "placement": { "top": 142, "left": 285, "width": 190, "height": 16, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "\ud83d\udcc2 /data/normalize \u2192 /data/normalized" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#90CAF9" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "dir-fi",
+              "placement": { "top": 142, "left": 560, "width": 190, "height": 16, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "\ud83d\udcc2 /data/normalized \u2192 /data/processed" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#90CAF9" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "dir-cp",
+              "placement": { "top": 142, "left": 835, "width": 190, "height": 16, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "\ud83d\udcc2 /data/processing \u2192 /data/processed" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#90CAF9" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "sftp-note",
+              "placement": { "top": 160, "left": 10, "width": 190, "height": 14, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "SFTP \u2192 estabilidad \u2192 JMS" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#78909C" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "fn-note",
+              "placement": { "top": 160, "left": 285, "width": 190, "height": 14, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "AFP/AFC/APV/CCAF/ISL/\u2026 \u2192 JSONL" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#78909C" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "fi-note",
+              "placement": { "top": 160, "left": 560, "width": 190, "height": 14, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "JSONL \u2192 chunks \u2192 HPA (1-2)" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#78909C" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            },
+            {
+              "type": "rectangle",
+              "name": "cp-note",
+              "placement": { "top": 160, "left": 835, "width": 190, "height": 14, "rotation": 0 },
+              "background": { "color": { "fixed": "transparent" }, "image": { "mode": "fixed", "value": "" } },
+              "border": { "color": { "fixed": "transparent" }, "width": 0 },
+              "config": {
+                "text": { "mode": "fixed", "fixed": "Workers paralelos \u2013 KEDA (2-20)" },
+                "align": "center", "valign": "middle",
+                "color": { "fixed": "#78909C" }, "size": 10, "links": []
+              },
+              "constraint": { "horizontal": "left", "vertical": "top" }
+            }
+          ],
+          "placement": { "top": 0, "left": 0, "width": 1060, "height": 185, "rotation": 0 },
+          "background": { "color": { "fixed": "#111217" }, "image": { "mode": "fixed", "value": "" } },
+          "border": { "color": { "fixed": "dark-green" }, "width": 0 },
+          "constraint": { "horizontal": "left", "vertical": "top" }
+        }
+      }
+    },
+
+    {
+      "type": "row",
+      "id": 20,
+      "title": "Estado de Servicios",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "collapsed": false
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [{ "options": { "0": { "color": "red", "index": 0, "text": "DOWN" }, "1": { "color": "green", "index": 1, "text": "UP" } }, "type": "value" }],
+          "noValue": "N/A",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 15 },
+      "id": 2,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "up{job=\"quantum-sftp-gateway\"}", "instant": true, "legendFormat": "sftp-gateway", "refId": "A" }],
+      "title": "SFTP Gateway :8083",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [{ "options": { "0": { "color": "red", "index": 0, "text": "DOWN" }, "1": { "color": "green", "index": 1, "text": "UP" } }, "type": "value" }],
+          "noValue": "N/A",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 15 },
+      "id": 3,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "up{job=\"quantum-format-normalizer\"}", "instant": true, "legendFormat": "format-normalizer", "refId": "A" }],
+      "title": "Format Normalizer :8084",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [{ "options": { "0": { "color": "red", "index": 0, "text": "DOWN" }, "1": { "color": "green", "index": 1, "text": "UP" } }, "type": "value" }],
+          "noValue": "N/A",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 15 },
+      "id": 4,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "up{job=\"quantum-file-ingester\"}", "instant": true, "legendFormat": "file-ingester", "refId": "A" }],
+      "title": "File Ingester :8081",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [{ "options": { "0": { "color": "red", "index": 0, "text": "DOWN" }, "1": { "color": "green", "index": 1, "text": "UP" } }, "type": "value" }],
+          "noValue": "N/A",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 15 },
+      "id": 5,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "up{job=\"quantum-chunk-processor\"}", "instant": true, "legendFormat": "chunk-processor", "refId": "A" }],
+      "title": "Chunk Processor :8082",
+      "type": "stat"
+    },
+
+    {
+      "type": "row",
+      "id": 21,
+      "title": "Throughput por Etapa (exchanges/s)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 },
+      "collapsed": false
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 2,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "yellow", "value": null }, { "color": "green", "value": 0.001 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 22 },
+      "id": 6,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_total{job=\"quantum-sftp-gateway\"}[2m])) or vector(0)", "legendFormat": "Exchanges/s", "refId": "A" }],
+      "title": "SFTP Gateway — Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 2,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "yellow", "value": null }, { "color": "green", "value": 0.001 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 22 },
+      "id": 7,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_total{job=\"quantum-format-normalizer\"}[2m])) or vector(0)", "legendFormat": "Exchanges/s", "refId": "A" }],
+      "title": "Format Normalizer — Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 2,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "yellow", "value": null }, { "color": "green", "value": 0.001 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 22 },
+      "id": 8,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_total{job=\"quantum-file-ingester\"}[2m])) or vector(0)", "legendFormat": "Exchanges/s", "refId": "A" }],
+      "title": "File Ingester — Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 2,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "yellow", "value": null }, { "color": "green", "value": 0.001 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 22 },
+      "id": 9,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(http_server_requests_seconds_count{job=\"quantum-chunk-processor\"}[2m])) or vector(0)", "legendFormat": "Req/s", "refId": "A" }],
+      "title": "Chunk Processor — Throughput",
+      "type": "stat"
+    },
+
+    {
+      "type": "row",
+      "id": 22,
+      "title": "Errores por Etapa",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 28 },
+      "collapsed": false
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 4,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.0001 }, { "color": "red", "value": 0.01 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 29 },
+      "id": 10,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_failed_total{job=\"quantum-sftp-gateway\"}[2m])) or vector(0)", "legendFormat": "Errors/s", "refId": "A" }],
+      "title": "SFTP Gateway — Errores",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 4,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.0001 }, { "color": "red", "value": 0.01 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 29 },
+      "id": 11,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_failed_total{job=\"quantum-format-normalizer\"}[2m])) or vector(0)", "legendFormat": "Errors/s", "refId": "A" }],
+      "title": "Format Normalizer — Errores",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 4,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.0001 }, { "color": "red", "value": 0.01 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 29 },
+      "id": 12,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_failed_total{job=\"quantum-file-ingester\"}[2m])) or vector(0)", "legendFormat": "Errors/s", "refId": "A" }],
+      "title": "File Ingester — Errores",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 4,
+          "unit": "short",
+          "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.0001 }, { "color": "red", "value": 0.01 }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 29 },
+      "id": 13,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(http_server_requests_seconds_count{job=\"quantum-chunk-processor\", status=~\"5..\"}[2m])) or vector(0)", "legendFormat": "Errors/s", "refId": "A" }],
+      "title": "Chunk Processor — Errores",
+      "type": "stat"
+    },
+
+    {
+      "type": "row",
+      "id": 23,
+      "title": "Tendencias — Metricas en el Tiempo",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 34 },
+      "collapsed": false
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": true, "showPoints": "never" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 35 },
+      "id": 14,
+      "options": {
+        "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "right" },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_total{job=\"quantum-sftp-gateway\"}[2m]))", "legendFormat": "sftp-gateway", "refId": "A" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_total{job=\"quantum-format-normalizer\"}[2m]))", "legendFormat": "format-normalizer", "refId": "B" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_total{job=\"quantum-file-ingester\"}[2m]))", "legendFormat": "file-ingester", "refId": "C" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(http_server_requests_seconds_count{job=\"quantum-chunk-processor\"}[2m]))", "legendFormat": "chunk-processor", "refId": "D" }
+      ],
+      "title": "Throughput — Todos los Servicios (exchanges/s)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": true, "showPoints": "never" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 35 },
+      "id": 15,
+      "options": {
+        "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "right" },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_failed_total{job=\"quantum-sftp-gateway\"}[2m]))", "legendFormat": "sftp-gateway errors", "refId": "A" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_failed_total{job=\"quantum-format-normalizer\"}[2m]))", "legendFormat": "format-normalizer errors", "refId": "B" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(camel_exchanges_failed_total{job=\"quantum-file-ingester\"}[2m]))", "legendFormat": "file-ingester errors", "refId": "C" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(rate(http_server_requests_seconds_count{job=\"quantum-chunk-processor\", status=~\"5..\"}[2m]))", "legendFormat": "chunk-processor errors", "refId": "D" }
+      ],
+      "title": "Errores — Todos los Servicios (/s)",
+      "type": "timeseries"
+    },
+
+    {
+      "type": "row",
+      "id": 24,
+      "title": "JVM — Memoria y CPU",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 43 },
+      "collapsed": false
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": true },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 44 },
+      "id": 16,
+      "options": {
+        "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "right" },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(jvm_memory_used_bytes{job=\"quantum-sftp-gateway\"})", "legendFormat": "sftp-gateway", "refId": "A" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(jvm_memory_used_bytes{job=\"quantum-format-normalizer\"})", "legendFormat": "format-normalizer", "refId": "B" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(jvm_memory_used_bytes{job=\"quantum-file-ingester\"})", "legendFormat": "file-ingester", "refId": "C" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(jvm_memory_used_bytes{job=\"quantum-chunk-processor\"})", "legendFormat": "chunk-processor", "refId": "D" }
+      ],
+      "title": "Heap JVM — Todos los Servicios",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": true },
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 44 },
+      "id": 17,
+      "options": {
+        "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "right" },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "process_cpu_usage{job=\"quantum-sftp-gateway\"}", "legendFormat": "sftp-gateway", "refId": "A" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "process_cpu_usage{job=\"quantum-format-normalizer\"}", "legendFormat": "format-normalizer", "refId": "B" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "process_cpu_usage{job=\"quantum-file-ingester\"}", "legendFormat": "file-ingester", "refId": "C" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "process_cpu_usage{job=\"quantum-chunk-processor\"}", "legendFormat": "chunk-processor", "refId": "D" }
+      ],
+      "title": "CPU Usage — Todos los Servicios",
+      "type": "timeseries"
+    }
+  ]
+}

@@ -160,12 +160,17 @@ services:
     profiles:
       - full-docker
     environment:
-      - AMQ_USER=admin
-      - AMQ_PASSWORD=admin
+      # NOTA: El broker es pre-creado en la imagen con usuario 'artemis'.
+      # AMQ_USER/AMQ_PASSWORD solo aplican si el broker NO existe aun (volumen nuevo).
+      - AMQ_USER=artemis
+      - AMQ_PASSWORD=artemis
       - AMQ_EXTRA_ARGS=--queues quantum.file.chunks,quantum.file.results,DLQ.quantum.file.chunks
     ports:
       - "61616:61616"
       - "8161:8161"
+    volumes:
+      - ./artemis/artemis-users.properties:/var/lib/artemis-instance/etc/artemis-users.properties
+      - ./artemis/artemis-roles.properties:/var/lib/artemis-instance/etc/artemis-roles.properties
     networks:
       - quantum-elk
     healthcheck:
